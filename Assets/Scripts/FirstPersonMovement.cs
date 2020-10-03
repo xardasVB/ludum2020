@@ -10,12 +10,13 @@ public class FirstPersonMovement : MonoBehaviour {
     rg = GetComponent<Rigidbody>();
   }
 
-  void Update() {
+  void LateUpdate() {
     velocity.y = Input.GetAxis("Vertical");
     velocity.x = Input.GetAxis("Horizontal");
     velocity = velocity.normalized * (Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : speed) * Time.deltaTime;
 
-    rg.velocity = transform.forward * velocity.y + transform.right * velocity.x;
+    var newVelo = transform.forward * velocity.y + transform.right * velocity.x;
+    rg.velocity = new Vector3(newVelo.x, rg.velocity.y, newVelo.z);
     //transform.Translate(velocity.x, 0, velocity.y);
   }
 }
