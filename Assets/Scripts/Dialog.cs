@@ -59,8 +59,8 @@ public class Dialog : MonoBehaviour {
     }
     else {
       gameObject.SetActive(false);
-      _onFinish?.Invoke();
       GameController.Instance.player.CanMove = true;
+      _onFinish?.Invoke();
     }
   }
 

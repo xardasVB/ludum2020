@@ -24,6 +24,9 @@ public class CanvasScript : MonoBehaviour {
 
   public Dialog dialog;
   public GameObject Interact;
+  public Computer Computer;
+  public Camera mainCamera;
+  public DateController date;
 
   // Start is called before the first frame update
   void Start() {
@@ -33,6 +36,15 @@ public class CanvasScript : MonoBehaviour {
   // Update is called once per frame
   void Update() {
 
+  }
+
+  public void TurnOnComputer() {
+    mainCamera.GetComponent<BlitTest>().enabled = true;
+    Computer.gameObject.SetActive(true);
+  }
+  public void TurnOffComputer() {
+    mainCamera.GetComponent<BlitTest>().enabled = false;
+    Computer.gameObject.SetActive(false);
   }
 
   public void SetInteract(string text) {

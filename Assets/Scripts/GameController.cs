@@ -21,16 +21,18 @@ public class GameController : MonoBehaviour {
     _instance = this;
   }
 
-
   public FirstPersonMovement player;
 
-  // Start is called before the first frame update
   void Start() {
+    //CanvasScript.Instance.date.ShowDate(GetNextDate());
+  }
+
+  void Update() {
 
   }
 
-  // Update is called once per frame
-  void Update() {
-
+  public string GetNextDate()
+  {
+    return "June 28\n8:00 AM";
   }
 }

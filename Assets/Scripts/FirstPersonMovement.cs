@@ -16,17 +16,6 @@ public class FirstPersonMovement : MonoBehaviour {
     mainCamera = GetComponentInChildren<Camera>();
   }
 
-  void LateUpdate() {
-    if (!CanMove) return;
-    velocity.y = Input.GetAxis("Vertical");
-    velocity.x = Input.GetAxis("Horizontal");
-    velocity = velocity.normalized * (Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : speed) * Time.deltaTime;
-
-    var newVelo = transform.forward * velocity.y + transform.right * velocity.x;
-    rg.velocity = new Vector3(newVelo.x, rg.velocity.y, newVelo.z);
-    //transform.Translate(velocity.x, 0, velocity.y);
-  }
-
   void Update() {
 
     Uobject uobj = null;
@@ -52,5 +41,21 @@ public class FirstPersonMovement : MonoBehaviour {
         uobj.InteractAction.Invoke();
       }
     }
+
+    if (Input.GetKeyDown(KeyCode.Escape)) {
+      if (CanvasScript.Instance.Computer.gameObject.activeSelf) {
+        CanvasScript.Instance.TurnOffComputer();
+        return;
+      }
+    }
+
+    if (!CanMove) return;
+    velocity.y = Input.GetAxis("Vertical");
+    velocity.x = Input.GetAxis("Horizontal");
+    velocity = velocity.normalized * (Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : speed) * Time.deltaTime;
+
+    var newVelo = transform.forward * velocity.y + transform.right * velocity.x;
+    rg.velocity = new Vector3(newVelo.x, rg.velocity.y, newVelo.z);
+    //transform.Translate(velocity.x, 0, velocity.y);
   }
 }
