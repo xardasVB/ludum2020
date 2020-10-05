@@ -4,8 +4,14 @@ using UnityEngine;
 
 public class UobjPhone : Uobject {
   public Sprite bossImg;
+  public Uobject computer;
+
+  void Start() {
+    computer.isBusy = true;
+  }
 
   public void Interact() {
+    computer.isBusy = false;
     GetComponent<AudioSource>().Stop();
     isBusy = true;
     CanvasScript.Instance.dialog.WriteText(new Dictionary<string, float>() {
@@ -20,7 +26,7 @@ public class UobjPhone : Uobject {
         CanvasScript.Instance.dialog.WriteText(new Dictionary<string, float>() {
           { "Alright, i'm sorry. I was up for too late last night, that won't happen again.", 0.05f },
           { "Just a moment, I`ll turn my computer on.", 0.05f },
-        }, "...", null, () => isBusy = false);
+        }, "...", null, null);//() => isBusy = false);
       });
     });
   }

@@ -13,9 +13,10 @@ public class DateController : MonoBehaviour {
   private float _curCd = 0;
 
   public void ShowDate(string date) {
+    gameObject.SetActive(true);
     GameController.Instance.player.CanMove = false;
     text.text = "";
-    GetComponent<CanvasGroup>().DOFade(3f, 1f).OnComplete(() => {
+    GetComponent<CanvasGroup>().DOFade(1f, 1f).OnComplete(() => {
       _text = date;
       startPrinting = true;
     });

@@ -37,7 +37,7 @@ public class FirstPersonMovement : MonoBehaviour {
         CanvasScript.Instance.dialog.Next();
         return;
       }
-      if (uobj) {
+      if (uobj && !uobj.isBusy) {
         uobj.InteractAction.Invoke();
       }
     }
