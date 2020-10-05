@@ -31,6 +31,7 @@ public class CanvasScript : MonoBehaviour {
   void Start() {
     GameController.Instance.SetDay();
     date.ShowDate(GameController.Instance.GetNextDate());
+    GameController.daysCount++;
   }
 
   public void TurnOnComputer() {

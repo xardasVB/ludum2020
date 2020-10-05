@@ -58,6 +58,7 @@ public class Chat : MonoBehaviour {
         printCd = 0;
         if (_text == "") {
           startPrinting = false;
+          typeSound.Stop();
           if (!fakePrinting)
             canSend = true;
           return;
@@ -109,10 +110,12 @@ public class Chat : MonoBehaviour {
     _text = message;
     _action = action;
     startPrinting = true;
+    typeSound.Play();
   }
   public void TypeFakeMessage(string message, float time = 3f) {
     _text = message;
     startPrinting = true;
+    typeSound.Play();
     fakePrinting = true;
     Sequence seq = DOTween.Sequence();
     seq.AppendInterval(time);

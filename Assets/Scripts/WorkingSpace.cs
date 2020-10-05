@@ -33,10 +33,17 @@ public class WorkingSpace : MonoBehaviour {
     SetRandomData();
   }
 
+  private bool isFired = false;
   void Update() {
+    if (isFired) return;
     if (Input.GetKeyDown(KeyCode.E)) {
       if (Error.activeSelf) {
         Error.SetActive(false);
+        if (mistakeCount <= 0) {
+          CanvasScript.Instance.Computer.GetFired();
+          isFired = true;
+        }
+        successCount--;
         SetRandomData();
         return;
       }
@@ -54,7 +61,6 @@ public class WorkingSpace : MonoBehaviour {
     }
     else {
       SetRandomData();
-      successCount++;
     }
   }
   public void Disapprove() {
@@ -63,7 +69,6 @@ public class WorkingSpace : MonoBehaviour {
     }
     else {
       SetRandomData();
-      successCount++;
     }
   }
 
@@ -71,10 +76,6 @@ public class WorkingSpace : MonoBehaviour {
     mistakeCount--;
     Error.SetActive(true);
     Error.GetComponentInChildren<TextMeshProUGUI>().text = "ERROR:\n" + text + ".\nYou have " + mistakeCount + " mistakes left.";
-
-    if (mistakeCount <= 0) {
-      CanvasScript.Instance.Computer.GetFired();
-    }
   }
 
 
@@ -90,6 +91,13 @@ public class WorkingSpace : MonoBehaviour {
   }
 
   void SetRandomData() {
+    successCount++;
+    if (successCount >= successRequired) {
+      if (GameController.daysCount == 1) 
+        CanvasScript.Instance.Computer.FinishDay();
+      else
+        CanvasScript.Instance.Computer.FinishDay2();
+    }
     curData = data.data.OrderBy(a => Random.value).FirstOrDefault();
     Name.text = "Name: " + curData.Name;
     Email.text = "Email: " + curData.Email;

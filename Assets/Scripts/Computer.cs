@@ -8,9 +8,11 @@ public class Computer : MonoBehaviour {
   public WorkingSpace WorkingSpace;
   public Uobject computer;
   public bool canAltTab = true;
+  public AudioSource ambient;
 
   void Start() {
-    gameObject.SetActive(false);
+    gameObject.SetActive(true);
+    GetComponent<CanvasGroup>().alpha = 0;
   }
 
   void Update() {
@@ -24,15 +26,34 @@ public class Computer : MonoBehaviour {
         WorkingSpace.SetActive(false);
       }
     }
+
+    if (Input.GetKeyDown(KeyCode.Z)) {
+      if (GetComponent<CanvasGroup>().alpha == 1) {
+        CanvasScript.Instance.TurnOffComputer();
+      }
+    }
   }
 
   public void SetActive(bool state) {
     computer.isBusy = state;
-    gameObject.SetActive(state);
-    Chat.ResetLayouts();
+    if (state)
+      ambient.Play();
+    else
+      ambient.Stop();
+    GetComponent<CanvasGroup>().alpha = state ? 1 : 0;
+    //gameObject.SetActive(state);
+    if (state)
+      Chat.ResetLayouts();
     CanvasScript.Instance.mainCamera.GetComponent<BlitTest>().enabled = state;
     GameController.Instance.player.CanMove = !state;
-    Scenario1();
+    switch (GameController.daysCount) {
+      case 1:
+        Scenario1();
+        break;
+      default:
+        Scenario2();
+        break;
+    }
   }
 
   private static bool scenario1Started = false;
@@ -44,12 +65,12 @@ public class Computer : MonoBehaviour {
 
     Sequence seq = DOTween.Sequence();
     seq.AppendInterval(1.5f);
-    seq.AppendCallback(() => Chat.TypeToYouMessage("Despite the outbreak, we have a lot of tourists coming through the border", 3f));
-    seq.AppendInterval(5f);
+    seq.AppendCallback(() => Chat.TypeToYouMessage("Despite the outbreak, we have lots of tourists coming through the border", 3f));
+    seq.AppendInterval(4f);
     seq.AppendCallback(() => Chat.TypeToYouMessage("And you need to approve their passport data", 3f));
-    seq.AppendInterval(5f);
+    seq.AppendInterval(4f);
     seq.AppendCallback(() => Chat.TypeToYouMessage("INSTEAD OF SLEEPING!!!!!", 3f));
-    seq.AppendInterval(5f);
+    seq.AppendInterval(4f);
     seq.AppendCallback(() => Chat.TypeFakeMessage("F*ck off", 2f));
     seq.AppendInterval(4f);
     seq.AppendCallback(() => Chat.TypeFromYouMessage("I'm sorry, as I said it won't happen again", () => {
@@ -61,7 +82,7 @@ public class Computer : MonoBehaviour {
       seq.AppendInterval(4f);
       seq.AppendCallback(() => Chat.TypeToYouMessage("If you see invalid <color=#FC9E4F>names or emails</color> disapprove it immediately", 2f));
       seq.AppendInterval(4f);
-      seq.AppendCallback(() => Chat.TypeToYouMessage("Also check the <color=#FC9E4F>expire date</color> and more importantly their <color=#FC9E4F>credit card</color>. They are trying to get through without paying!", 2f));
+      seq.AppendCallback(() => Chat.TypeToYouMessage("Also check the <color=#FC9E4F>expire date</color> and more importantly their <color=#FC9E4F>16 credit card numbers</color>. They are trying to get through without paying!", 2f));
       seq.AppendInterval(4f);
       seq.AppendCallback(() => Chat.TypeToYouMessage("Now get back to work! Alt <color=#FC9E4F>Tab</color> to your working space!", 2f));
       seq.AppendInterval(4f);
@@ -74,11 +95,51 @@ public class Computer : MonoBehaviour {
   }
 
 
+  private static bool scenario2Started = false;
+  public void Scenario2() {
+    if (scenario2Started) return;
+    scenario2Started = true;
+    canAltTab = false;
+    Chat.SetActive(true);
+
+    Sequence seq = DOTween.Sequence();
+    seq.AppendInterval(1.5f);
+    seq.AppendCallback(() => Chat.TypeToYouMessage("Despite the outbreak, we have lots of tourists coming through the border", 2f));
+    seq.AppendInterval(3f);
+    seq.AppendCallback(() => Chat.TypeToYouMessage("And you need to approve their passport data", 2f));
+    seq.AppendInterval(3f);
+    seq.AppendCallback(() => Chat.TypeToYouMessage("INSTEAD OF SLEEPING!!!!!", 2f));
+    seq.AppendInterval(3f);
+    seq.AppendCallback(() => Chat.TypeFakeMessage("Can you f*uck off man", 2f));
+    seq.AppendInterval(3f);
+    seq.AppendCallback(() => Chat.TypeFromYouMessage("You said the exact SAME thing yesterday!", () => {
+      seq = DOTween.Sequence();
+      seq.AppendInterval(1f);
+      seq.AppendCallback(() => Chat.TypeToYouMessage("Are you sick? I already told you yesterday was day off", 2f));
+      seq.AppendInterval(4f);
+      seq.AppendCallback(() => Chat.TypeToYouMessage("Anyway, we have a lot of clients, and remember to check all their data", 1f));
+      seq.AppendInterval(3f);
+      seq.AppendCallback(() => Chat.TypeToYouMessage("If you see invalid <color=#FC9E4F>names or emails</color> disapprove it immediately", 1f));
+      seq.AppendInterval(3f);
+      seq.AppendCallback(() => Chat.TypeToYouMessage("Also check the <color=#FC9E4F>expire date</color> and more importantly their <color=#FC9E4F>16 credit card numbers</color>. They are trying to get through without paying!", 1f));
+      seq.AppendInterval(3f);
+      seq.AppendCallback(() => Chat.TypeToYouMessage("Now get back to work! Alt <color=#FC9E4F>Tab</color> to your working space!", 1f));
+      seq.AppendInterval(3f);
+      seq.AppendCallback(() => Chat.TypeFakeMessage("wtf??? is this some sort of a prank???", 2f));
+      seq.AppendInterval(3f);
+      seq.AppendCallback(() => Chat.TypeFromYouMessage("Aight", () => canAltTab = true));
+      seq.Play();
+    }));
+    seq.Play();
+  }
+
+
   public void GetFired() {
     canAltTab = false;
     Chat.SetActive(true);
     WorkingSpace.SetActive(false);
 
+    GameController.isFired = true;
     Sequence seq = DOTween.Sequence();
     seq.AppendInterval(1.5f);
     seq.AppendCallback(() => Chat.TypeToYouMessage("I'm losing clients because of you!", 1f));
@@ -87,7 +148,7 @@ public class Computer : MonoBehaviour {
     seq.AppendInterval(2f);
     seq.AppendCallback(() => Chat.TypeToYouMessage("YOU'RE FIRED!!!!!", 1f));
     seq.AppendInterval(2f);
-    seq.AppendCallback(() => Chat.TypeFakeMessage("F*ck off", 2f));
+    seq.AppendCallback(() => Chat.TypeFakeMessage("Please, I need this job", 2f));
     seq.AppendInterval(4f);
     seq.AppendCallback(() => Chat.TypeFromYouMessage("Go f*ck yourself", () => {
       GameController.Instance.SetNight();
@@ -112,6 +173,7 @@ public class Computer : MonoBehaviour {
     Chat.SetActive(true);
     WorkingSpace.SetActive(false);
 
+    GameController.isFired = false;
     Sequence seq = DOTween.Sequence();
     seq.AppendInterval(1.5f);
     seq.AppendCallback(() => Chat.TypeToYouMessage("Nice job, I'll send you your salary tomorrow, April 29th", 1f));
@@ -129,6 +191,44 @@ public class Computer : MonoBehaviour {
           { "It's late already, I wanna sleep. Can't wait for my salary tomorrow!", 0.05f}
         });
       });
+      seq.Play();
+    }));
+    seq.Play();
+  }
+
+  public void FinishDay2() {
+    canAltTab = false;
+    Chat.SetActive(true);
+    WorkingSpace.SetActive(false);
+
+    GameController.isFired = false;
+    Sequence seq = DOTween.Sequence();
+    seq.AppendInterval(1.5f);
+    seq.AppendCallback(() => Chat.TypeToYouMessage("Nice job, I'll send you your salary tomorrow, April 29th", 1f));
+    seq.AppendInterval(2.5f);
+    seq.AppendCallback(() => Chat.TypeFromYouMessage("But... I can swear you said that yesterday...", () => {
+      seq = DOTween.Sequence();
+      seq.AppendInterval(1f);
+      seq.AppendCallback(() => Chat.TypeToYouMessage("Kid, have a rest. You deserved it.", 2f));
+      seq.AppendInterval(4f);
+      seq.AppendCallback(() => Chat.TypeFakeMessage("Where is my money Lebowski???", 2f));
+      seq.AppendInterval(4f);
+      seq.AppendCallback(() => Chat.TypeFromYouMessage("Ok maybe I do need a rest", () => {
+        GameController.Instance.SetNight();
+        seq = DOTween.Sequence();
+        seq.AppendInterval(1f);
+        seq.AppendCallback(() => Chat.SetActive(false));
+        seq.AppendInterval(0.7f);
+        seq.AppendCallback(() => {
+          SetActive(false);
+          computer.isBusy = true;
+          CanvasScript.Instance.dialog.WriteText(new Dictionary<string, float> {
+          { "Man I can swear he promised me my salary yesterday. Maybe it was a dream...", 0.05f},
+          { "Anyway, I want to sleep.", 0.05f}
+        });
+        });
+        seq.Play();
+      }));
       seq.Play();
     }));
     seq.Play();

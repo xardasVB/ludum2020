@@ -8,12 +8,25 @@ public class FirstPersonMovement : MonoBehaviour {
   public Camera mainCamera;
 
   private Vector2 velocity;
-  private Rigidbody rg;
+  private CharacterController cc;
+
+  public float movementSmoothing = 0.15f;
 
   void Start() {
     GameController.Instance.player = this;
-    rg = GetComponent<Rigidbody>();
+    cc = GetComponent<CharacterController>();
     mainCamera = GetComponentInChildren<Camera>();
+  }
+
+  private void FixedUpdate() {
+    if (!CanMove) return;
+    velocity.y = Input.GetAxis("Vertical");
+    velocity.x = Input.GetAxis("Horizontal");
+    velocity = velocity.normalized * (Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : speed) * Time.fixedDeltaTime;// * Time.deltaTime;
+    var desiredPosition =(transform.forward * velocity.y + transform.right * velocity.x + transform.up * (-9.8f * Time.fixedDeltaTime));
+    cc.Move(desiredPosition);
+
+    //rg.velocity = new Vector3(newVelo.x, rg.velocity.y, newVelo.z);
   }
 
   void Update() {
@@ -42,20 +55,5 @@ public class FirstPersonMovement : MonoBehaviour {
       }
     }
 
-    if (Input.GetKeyDown(KeyCode.Escape)) {
-      if (CanvasScript.Instance.Computer.gameObject.activeSelf) {
-        CanvasScript.Instance.TurnOffComputer();
-        return;
-      }
-    }
-
-    if (!CanMove) return;
-    velocity.y = Input.GetAxis("Vertical");
-    velocity.x = Input.GetAxis("Horizontal");
-    velocity = velocity.normalized * (Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : speed) * Time.deltaTime;
-
-    var newVelo = transform.forward * velocity.y + transform.right * velocity.x;
-    rg.velocity = new Vector3(newVelo.x, rg.velocity.y, newVelo.z);
-    //transform.Translate(velocity.x, 0, velocity.y);
   }
 }
