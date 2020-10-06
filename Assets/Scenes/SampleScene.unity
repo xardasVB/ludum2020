@@ -44,15 +44,15 @@ RenderSettings:
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 0
+  m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
     m_IndirectOutputScale: 3
     m_AlbedoBoost: 10
     m_EnvironmentLightingMode: 0
-    m_EnableBakedLightmaps: 0
-    m_EnableRealtimeLightmaps: 1
+    m_EnableBakedLightmaps: 1
+    m_EnableRealtimeLightmaps: 0
   m_LightmapEditorSettings:
     serializedVersion: 12
     m_Resolution: 2
@@ -1613,7 +1613,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &221101031
 Transform:
   m_ObjectHideFlags: 0
@@ -10241,7 +10241,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1363721634
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14225,7 +14225,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1960605811
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14306,7 +14306,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec8e544eea5b9ee4ba523ad632d547bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fakeChance: 25
+  fakeChance: 50
   Name: {fileID: 1221030062}
   Email: {fileID: 1267318708}
   PasspordId: {fileID: 186746635}
@@ -14316,7 +14316,7 @@ MonoBehaviour:
   CreditCard: {fileID: 535312580}
   Error: {fileID: 155517511}
   mistakeCount: 5
-  successRequired: 40
+  successRequired: 15
 --- !u!1001 &1983594387
 PrefabInstance:
   m_ObjectHideFlags: 0

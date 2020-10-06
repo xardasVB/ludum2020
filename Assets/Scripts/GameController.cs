@@ -48,6 +48,8 @@ public class GameController : MonoBehaviour {
 
   public void SetDay() {
     bed.isBusy = true;
+    Computer.scenario1Started = false;
+    Computer.scenario2Started = false;
     skybox.SetColor("_Tint", skyboxColorDay);
     light.color = lightColorDay;
   }

@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
@@ -29,8 +31,31 @@ public class WorkingSpace : MonoBehaviour {
   private int successCount = 0;
 
   void Start() {
-    data = JsonUtility.FromJson<HumanDataContainer>(File.ReadAllText(Application.dataPath + "/Data.json"));
-    SetRandomData();
+    //if (!Application.dataPath.Contains("http")) {
+    //  data = JsonUtility.FromJson<HumanDataContainer>(File.ReadAllText(Application.dataPath + "/Data.json"));
+    //  SetRandomData();
+    //}
+    //else 
+    StartCoroutine(GetRequest(Application.dataPath + "/Data.json"));
+  }
+
+  IEnumerator GetRequest(string uri) {
+    using (UnityWebRequest webRequest = UnityWebRequest.Get(uri)) {
+      // Request and wait for the desired page.
+      yield return webRequest.SendWebRequest();
+
+      string[] pages = uri.Split('/');
+      int page = pages.Length - 1;
+
+      if (webRequest.isNetworkError) {
+        Debug.LogError(pages[page] + ": Error: " + webRequest.error);
+      }
+      else {
+        data = JsonUtility.FromJson<HumanDataContainer>(webRequest.downloadHandler.text);
+        SetRandomData();
+        SetActive(false);
+      }
+    }
   }
 
   private bool isFired = false;
@@ -93,40 +118,36 @@ public class WorkingSpace : MonoBehaviour {
   void SetRandomData() {
     successCount++;
     if (successCount >= successRequired) {
-      if (GameController.daysCount == 1) 
+      if (GameController.daysCount == 1 || GameController.isFired) 
         CanvasScript.Instance.Computer.FinishDay();
       else
         CanvasScript.Instance.Computer.FinishDay2();
     }
     curData = data.data.OrderBy(a => Random.value).FirstOrDefault();
-    Name.text = "Name: " + curData.Name;
-    Email.text = "Email: " + curData.Email;
-    PasspordId.text = "Passpord ID: " + curData.PasspordId;
-    ExpireDate.text = "Expire Date: " + curData.ExpireDate;
-    Country.text = "Country: " + curData.Country;
-    City.text = "City: " + curData.City;
-    CreditCard.text = "Credit Card: " + curData.CreditCard;
 
     if (Random.Range(0, 100) < fakeChance) {
       curData.faked = true;
       switch (Random.Range(0, 4)) {
         case 0:
-          Name.text = "Name: " + Guid.NewGuid();
+          curData.Name = Guid.NewGuid().ToString();
           curData.fakedReason = "Name is not real";
           break;
         case 1:
-          Email.text = "Email: " + curData.Email.Replace("@", "");
+          if (Random.value > 0.2f)
+            curData.Email = TruncatePercents(curData.Email);
+          else
+            curData.Email = Guid.NewGuid().ToString();
           curData.fakedReason = "Email is incorrect";
           break;
         case 2:
-          ExpireDate.text = "Expire Date: " + curData.ExpireDate.Remove(curData.ExpireDate.Length - 1, 1) + Random.Range(0, 4);
+          curData.ExpireDate = curData.ExpireDate.Remove(curData.ExpireDate.Length - 1, 1) + Random.Range(0, 4);
           curData.fakedReason = "Passport already expired";
           break;
         case 3:
-          if (Random.value > 0.5)
-            CreditCard.text = "Credit Card: " + curData.CreditCard.Remove(0, 5);
+          if (Random.value > 0.5f)
+            curData.CreditCard = curData.CreditCard.Remove(0, 5);
           else
-            CreditCard.text = "Credit Card: " + curData.CreditCard.Replace(curData.CreditCard[Random.Range(0, curData.CreditCard.Length)], 'i');
+            curData.CreditCard = curData.CreditCard.Replace(curData.CreditCard[Random.Range(0, curData.CreditCard.Length)], 'i');
           curData.fakedReason = "Credit card is fake";
           break;
         default:
@@ -134,6 +155,17 @@ public class WorkingSpace : MonoBehaviour {
       }
     }
 
+    Name.text = "Name: " + curData.Name;
+    Email.text = "Email: " + curData.Email;
+    PasspordId.text = "Passpord ID: " + curData.PasspordId;
+    ExpireDate.text = "Expire Date: " + curData.ExpireDate;
+    Country.text = "Country: " + curData.Country;
+    City.text = "City: " + curData.City;
+    CreditCard.text = "Credit Card: " + curData.CreditCard;
+  }
+
+  private string TruncatePercents(string input) {
+    return Regex.Replace(input, @"@+", "");
   }
 }
 

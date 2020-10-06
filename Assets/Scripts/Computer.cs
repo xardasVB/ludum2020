@@ -56,11 +56,12 @@ public class Computer : MonoBehaviour {
     }
   }
 
-  private static bool scenario1Started = false;
+  public static bool scenario1Started = false;
   public void Scenario1() {
     if (scenario1Started) return;
     scenario1Started = true;
     canAltTab = false;
+    WorkingSpace.SetActive(false);
     Chat.SetActive(true);
 
     Sequence seq = DOTween.Sequence();
@@ -95,38 +96,39 @@ public class Computer : MonoBehaviour {
   }
 
 
-  private static bool scenario2Started = false;
+  public static bool scenario2Started = false;
   public void Scenario2() {
     if (scenario2Started) return;
     scenario2Started = true;
     canAltTab = false;
+    WorkingSpace.SetActive(false);
     Chat.SetActive(true);
 
     Sequence seq = DOTween.Sequence();
-    seq.AppendInterval(1.5f);
-    seq.AppendCallback(() => Chat.TypeToYouMessage("Despite the outbreak, we have lots of tourists coming through the border", 2f));
-    seq.AppendInterval(3f);
-    seq.AppendCallback(() => Chat.TypeToYouMessage("And you need to approve their passport data", 2f));
-    seq.AppendInterval(3f);
-    seq.AppendCallback(() => Chat.TypeToYouMessage("INSTEAD OF SLEEPING!!!!!", 2f));
-    seq.AppendInterval(3f);
-    seq.AppendCallback(() => Chat.TypeFakeMessage("Can you f*uck off man", 2f));
-    seq.AppendInterval(3f);
+    seq.AppendInterval(0.5f);
+    seq.AppendCallback(() => Chat.TypeToYouMessage("Despite the outbreak, we have lots of tourists coming through the border", 1f));
+    seq.AppendInterval(2f);
+    seq.AppendCallback(() => Chat.TypeToYouMessage("And you need to approve their passport data", 1f));
+    seq.AppendInterval(2f);
+    seq.AppendCallback(() => Chat.TypeToYouMessage("INSTEAD OF SLEEPING!!!!!", 1f));
+    seq.AppendInterval(2f);
+    seq.AppendCallback(() => Chat.TypeFakeMessage("Can you f*ck off man", 2f));
+    seq.AppendInterval(4f);
     seq.AppendCallback(() => Chat.TypeFromYouMessage("You said the exact SAME thing yesterday!", () => {
       seq = DOTween.Sequence();
-      seq.AppendInterval(1f);
+      seq.AppendInterval(0.5f);
       seq.AppendCallback(() => Chat.TypeToYouMessage("Are you sick? I already told you yesterday was day off", 2f));
-      seq.AppendInterval(4f);
+      seq.AppendInterval(3f);
       seq.AppendCallback(() => Chat.TypeToYouMessage("Anyway, we have a lot of clients, and remember to check all their data", 1f));
-      seq.AppendInterval(3f);
+      seq.AppendInterval(2f);
       seq.AppendCallback(() => Chat.TypeToYouMessage("If you see invalid <color=#FC9E4F>names or emails</color> disapprove it immediately", 1f));
-      seq.AppendInterval(3f);
+      seq.AppendInterval(2f);
       seq.AppendCallback(() => Chat.TypeToYouMessage("Also check the <color=#FC9E4F>expire date</color> and more importantly their <color=#FC9E4F>16 credit card numbers</color>. They are trying to get through without paying!", 1f));
-      seq.AppendInterval(3f);
+      seq.AppendInterval(2f);
       seq.AppendCallback(() => Chat.TypeToYouMessage("Now get back to work! Alt <color=#FC9E4F>Tab</color> to your working space!", 1f));
-      seq.AppendInterval(3f);
-      seq.AppendCallback(() => Chat.TypeFakeMessage("wtf??? is this some sort of a prank???", 2f));
-      seq.AppendInterval(3f);
+      seq.AppendInterval(2f);
+      seq.AppendCallback(() => Chat.TypeFakeMessage("wtf??? is this some sort of a prank???", 3f));
+      seq.AppendInterval(7f);
       seq.AppendCallback(() => Chat.TypeFromYouMessage("Aight", () => canAltTab = true));
       seq.Play();
     }));
@@ -211,8 +213,8 @@ public class Computer : MonoBehaviour {
       seq.AppendInterval(1f);
       seq.AppendCallback(() => Chat.TypeToYouMessage("Kid, have a rest. You deserved it.", 2f));
       seq.AppendInterval(4f);
-      seq.AppendCallback(() => Chat.TypeFakeMessage("Where is my money Lebowski???", 2f));
-      seq.AppendInterval(4f);
+      seq.AppendCallback(() => Chat.TypeFakeMessage("Where is my money Lebowski???", 3f));
+      seq.AppendInterval(7f);
       seq.AppendCallback(() => Chat.TypeFromYouMessage("Ok maybe I do need a rest", () => {
         GameController.Instance.SetNight();
         seq = DOTween.Sequence();
